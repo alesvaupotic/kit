@@ -207,7 +207,7 @@ export function create_client(app, target) {
 
 	/**
 	 * @param {string | URL} url
-	 * @param {{ noScroll?: boolean; replaceState?: boolean; keepFocus?: boolean; state?: any; invalidateAll?: boolean }} opts
+	 * @param {{ noScroll?: boolean; replaceState?: boolean; keepFocus?: boolean; state?: any; invalidateAll?: boolean,displayUrl?: string }} opts
 	 * @param {string[]} redirect_chain
 	 * @param {{}} [nav_token]
 	 */
@@ -218,7 +218,8 @@ export function create_client(app, target) {
 			replaceState = false,
 			keepFocus = false,
 			state = {},
-			invalidateAll = false
+			invalidateAll = false,
+			displayUrl = ''
 		},
 		redirect_chain,
 		nav_token
@@ -234,7 +235,8 @@ export function create_client(app, target) {
 			redirect_chain,
 			details: {
 				state,
-				replaceState
+				replaceState,
+				displayUrl
 			},
 			nav_token,
 			accepted: () => {
@@ -945,6 +947,7 @@ export function create_client(app, target) {
 	 *   details: {
 	 *     replaceState: boolean;
 	 *     state: any;
+	 * 	   displayUrl: URL | null
 	 *   } | null;
 	 *   type: import('@sveltejs/kit').Navigation["type"];
 	 *   delta?: number;
@@ -1062,7 +1065,7 @@ export function create_client(app, target) {
 		if (details) {
 			const change = details.replaceState ? 0 : 1;
 			details.state[INDEX_KEY] = current_history_index += change;
-			history[details.replaceState ? 'replaceState' : 'pushState'](details.state, '', url);
+			history[details.replaceState ? 'replaceState' : 'pushState'](details.state, '',details.displayUrl || url);
 
 			if (!details.replaceState) {
 				// if we navigated back, then pushed a new state, we can
